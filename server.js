@@ -90,7 +90,8 @@ router.route('/generatePL')
 	.get(function(req, res){
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
-			res.json(response)
+			var curr = parseFloat(response.PandLUSDTotal/response.PandLHKDTotal).toFixed(5);
+			res.render('PLreport', {"rows": JSON.stringify(response.traders), "finalPLHKD": response.PandLHKDTotal, "finalPLUSD": response.PandLUSDTotal, "curr":curr});
 			return;
 		})
 	})

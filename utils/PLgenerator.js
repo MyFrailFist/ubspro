@@ -141,7 +141,7 @@ exports.generatePL = function(input, callback){
 		], function(err, results){
 			if(err) return(err);
 			console.log('the results', results);
-			return callback(null);
+			return callback(null, results);
 		})
 }
 

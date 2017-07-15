@@ -47,15 +47,22 @@ html(lang='en')
               a(href='/ubs/traders') Traders
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           .container#tradersPanel
-            h2 Traders Data
+            h2 Trades of the Day
             p Click on the Trader names to view their trades
              each item in JSON.parse(rows)
               -var local_data = JSON.stringify(item.tradeReport)
               .panel-group
                 .panel.panel-default
-                  .panel-heading
-                    h4.panel-title
-                      a(data-toggle='collapse', href="#"+item.traderName) #{item.traderName}                      
+                  .panel-heading.row
+                    .col-xs-4
+                      h4.panel-title
+                        a(data-toggle='collapse', href="#"+item.traderName) #{item.traderName} 
+                    .col-xs-4
+                      h4.panel-title
+                        a Profit Loss:  #{item.PandLHKD}HKD
+                    .col-xs-4
+                      h4.panel-title
+                        a #{item.PandLUSD}USD                   
                       input(type= 'hidden', name='target', value=local_data)
                   div(id=item.traderName).panel-collapse.collapse
                    -local_data = JSON.parse(local_data)
@@ -67,6 +74,15 @@ html(lang='en')
                       li.list-group-item Price: #{item.price}
                       li.list-group-item Base Currency: #{item.baseCurrency}
                       footer.footer#color 
+          .container#ProfitLoss
+            h2 Profit Loss Report
+            p HKD to USD = #{curr}
+            .col-xs-6
+              h3 USD
+              p #{finalPLUSD}
+            .col-xs-6
+              h3 HKD
+              p #{finalPLHKD}
     // /container
     // Bootstrap core JavaScript
     // ==================================================
