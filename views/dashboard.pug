@@ -1,0 +1,141 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    title Dashboard for Financial products
+    // Bootstrap core CSS
+    link(href=`/bootstrap/dist/css/bootstrap.min.css`, rel='stylesheet')
+    // Custom styles for this template
+    link(href=`/bootstrap/docs/examples/dashboard/dashboard.css`, rel='stylesheet')
+    // HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries
+    //if lt IE 9
+    script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+    script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    script(src='https://code.jquery.com/jquery-2.2.4.min.js', integrity='sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=', crossorigin='anonymous')
+  body
+    .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='#') UBS
+        .navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href='#') Dashboard
+            li
+              a(href='#') Settings
+            li
+              a(href='#') Profile
+            li
+              a(href='#') Help
+          form.navbar-form.navbar-right
+            input.form-control(type='text', placeholder='Search...')
+    .container-fluid
+      .row
+        .col-sm-3.col-md-2.sidebar
+          ul.nav.nav-sidebar
+            li.active
+              a(href='#myTable') Overview
+            li
+              a(href='#') Profit Loss Report
+            li
+              a(href='#') Analytics
+            li
+              a(href='/ubs/traders') Traders
+        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+          h1.page-header Dashboard
+          .row.placeholders
+            .col-xs-6.col-sm-4.placeholder
+              img.img-responsive(src='../../../../../media/HSI2.png', alt='Hang Seng Index')
+              h4 Hang Seng Index
+              span.text-muted 
+            .col-xs-6.col-sm-4.placeholder
+              img.img-responsive(src='../../../../../media/HSI2.png', alt='Commodities')
+              h4 Commodities
+              span.text-muted 
+            .col-xs-6.col-sm-4.placeholder
+              img.img-responsive(src='../../../../../media/HSI2.png', alt='Currency')
+              h4 Currency
+              span.text-muted 
+          h2.sub-header Stocks
+          .table-responsive#myTable
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th Symbol
+                  th Company Name
+                  th Internal Price Quote
+                  th Yahoo Quote
+                  th Bloom Quote
+                  th Reuters Quote
+              tbody#myTable23
+               each item in rows
+                tr
+                  td=item.abbreviation
+                  td=item.name
+                  td=item.internalPrice
+                  td=item.yahooQuote
+                  td=item.bloomQuote
+                  td=item.reutersQuote
+    // Bootstrap core JavaScript
+    // ==================================================
+    // Placed at the end of the document so the pages load faster
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+    script(src=`/bootstrap/dist/js/bootstrap.min.js`)
+    script(src=`/bootstrap/docs/assets/js/vendor/holder.js`)
+    script(src=`/assets/js/jquery.js`,type='text/javascript')
+    script.
+      $(document).ready(function(){ 
+        $('#myTable23 tr').each(function(){
+              var check1 = $(this).find('td')[2].innerHTML;
+              var check2 = $(this).find('td')[3].innerHTML;
+              console.log(check1, check2);
+              var buh= $('td:nth-child(4)').html();
+              console.log(buh);
+              if(check1==check2){
+              console.log("SAME");
+                $(this).find('td:nth-child(3)').css("background-color", "#7FFFD4");
+                $(this).find('td:nth-child(4)').css("background-color", "#7FFFD4");
+                $(this).find('td:nth-child(5)').css("background-color", "#7FFFD4");
+                $(this).find('td:nth-child(6)').css("background-color", "#7FFFD4");
+              }
+              else {
+                $(this).find('td:nth-child(3)').css("background-color", "#FF0000");
+                $(this).find('td:nth-child(4)').css("background-color", "#7FFFD4");
+                $(this).find('td:nth-child(5)').css("background-color", "#7FFFD4");
+                $(this).find('td:nth-child(6)').css("background-color", "#7FFFD4");
+                }
+              //- if(check1!=check2){
+              //-   $('td:nth-child(4)').css("background-color", "#FF0000");
+              //- }
+              
+          })
+      })
+      
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

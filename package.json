@@ -1,0 +1,34 @@
+{
+	"name": "UBSproject",
+	"version": "1.0.0",
+	"description": "internal check and notification and verification",
+	"private" : true,
+	"scripts": {
+		"start": "server.js"
+	},
+	"dependencies": {
+		"async": "latest",
+		"body-parser": "^1.17.2",
+		"cheerio" :"latest",
+		"express": "4.15.3",
+		"isomorphic-fetch": "^2.2.1",
+		"moment": "^2.18.1",
+		"mongoose": "^4.10.4",
+		"node-cron": "~1.1.1",
+		"request": "latest",
+    	"uuid": "^3.0.0",
+    	"xlsx": "latest",
+    	"path": "latest",
+    	"exceljs": "latest"
+    	
+	},
+	"devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
+  }
+
+}

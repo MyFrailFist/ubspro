@@ -1,0 +1,113 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    title Traders Report 
+    link(rel='icon', href=`/bootstrap/docs/favicon.ico`)
+    link(href=`/bootstrap/dist/css/bootstrap.min.css`, rel='stylesheet')
+    link(href=`/bootstrap/docs/examples/dashboard/dashboard.css`, rel='stylesheet')
+    script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+    script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    script(src='https://code.jquery.com/jquery-2.2.4.min.js', integrity='sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=', crossorigin='anonymous')
+  body
+    .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='#') UBS
+        .navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href='#') Dashboard
+            li
+              a(href='#') Settings
+            li
+              a(href='#') Profile
+            li
+              a(href='#') Help
+          form.navbar-form.navbar-right
+            input.form-control(type='text', placeholder='Search...')
+    .container-fluid
+      .row
+        .col-sm-3.col-md-2.sidebar
+          ul.nav.nav-sidebar
+            li.active
+              a(href='/ubs/slotValues') Overview
+            li
+              a(href='/ubs/profitLoss') Profit Loss Report
+            li
+              a(href='#') Analytics
+            li
+              a(href='/ubs/traders') Traders
+        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+          .container#tradersPanel
+            h2 Traders Data
+            p Click on the Trader names to view their trades
+             each item in JSON.parse(rows)
+              -var local_data = JSON.stringify(item.tradeReport)
+              .panel-group
+                .panel.panel-default
+                  .panel-heading
+                    h4.panel-title
+                      a(data-toggle='collapse', href="#"+item.traderName) #{item.traderName}                      
+                      input(type= 'hidden', name='target', value=local_data)
+                  div(id=item.traderName).panel-collapse.collapse
+                   -local_data = JSON.parse(local_data)
+                   each item in local_data                 
+                    ul.list-group
+                      li.list-group-item Company Name: #{item.name}
+                      li.list-group-item Product Type: #{item.productType}
+                      li.list-group-item Action: #{item.actions}
+                      li.list-group-item Price: #{item.price}
+                      li.list-group-item Base Currency: #{item.baseCurrency}
+                      footer.footer#color 
+    // /container
+    // Bootstrap core JavaScript
+    // ==================================================
+    // Placed at the end of the document so the pages load faster
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+    script(src=`/bootstrap/dist/js/bootstrap.min.js`)
+    script.
+      $(document).ready(function(){
+        $("#tradersPanel div").find("input").each(function(){
+          var reportDiv = $(this).parent().parent().next().children();
+          var data = $(this).val();
+          data = JSON.parse(data);
+          $(reportDiv).each(function(){
+            var value = $(this).find("input").value;
+            value = JSON.stringify(value);
+            console.log(value);          
+          })
+        })
+      })
+      
+      
+      
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
