@@ -4,7 +4,8 @@
 	"description": "internal check and notification and verification",
 	"private" : true,
 	"scripts": {
-		"start": "server.js"
+		"install": "node-gyp rebuild",
+		"start": "node server.js"
 	},
 	"dependencies": {
 		"async": "latest",
