@@ -44,6 +44,7 @@ var tradeActionSchema = new Schema({
 	bloomQuote: Number,
 	yahooQuote: Number,
 	reutersQuote: Number,
+	internalPrice: Number,
 	baseCurrency: String
 })
 var Trader = mongoose.model('Trader', traderSchema)

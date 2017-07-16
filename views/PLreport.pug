@@ -55,36 +55,72 @@ html(lang='en')
               -var local_data = JSON.stringify(item.tradeReport)
               .panel-group
                 .panel.panel-default
-                  .panel-heading.row
-                    .col-xs-4
+                  .panel-heading
                       h4.panel-title
-                        a(data-toggle='collapse', href="#"+item.traderName) #{item.traderName} 
-                    .col-xs-4
-                      h4.panel-title
-                        a Profit Loss:  #{item.PandLHKD}HKD
-                    .col-xs-4
-                      h4.panel-title
-                        a #{item.PandLUSD}USD                   
+                        a(data-toggle='collapse', href="#"+item.traderName) #{item.traderName}                 
                       input(type= 'hidden', name='target', value=local_data)
                   div(id=item.traderName).panel-collapse.collapse
                    -local_data = JSON.parse(local_data)
-                   each item in local_data                 
-                    ul.list-group
-                      li.list-group-item Company Name: #{item.name}
-                      li.list-group-item Product Type: #{item.productType}
-                      li.list-group-item Action: #{item.actions}
-                      li.list-group-item Price: #{item.price}
-                      li.list-group-item Base Currency: #{item.baseCurrency}
-                      footer.footer#color 
+                    .table-responsive
+                    table.table.table-striped.table-bordered
+                      thead 
+                        tr
+                          th Company Symbol
+                          th Product Type
+                          th Action
+                          th Volume
+                          th Price Quote
+                          th Base Currency
+                          th P/L External
+                          th P/L Internal
+                          th P/L RMS 
+                      tbody#bodytable
+                        each item in local_data
+                         -var int=parseFloat((item.yahooQuote-item.price)*item.volume)
+                         -var ext=parseFloat((item.internalPrice-item.price)*item.volume)
+                          tr
+                            td=item.name
+                            td=item.productType
+                            td=item.actions
+                            td=item.volume
+                            td=item.price
+                            td=item.baseCurrency
+                            td=ext
+                            td=int
+                            td=0
+                      tfoot#totaltable
+                        tf
+                          td Total
+                          td
+                          td
+                          td
+                          td
+                          td
+                          td=item.PandLHKDExt
+                          td=item.PandLHKDInt
+                          td=0
           .container#ProfitLoss
-            h2 Profit Loss Report
+            h2 Profit Loss Report (Inproof)
             p HKD to USD = #{curr}
-            .col-xs-6
-              h3 USD
-              p #{finalPLUSD}
-            .col-xs-6
-              h3 HKD
-              p #{finalPLHKD}
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th Currency
+                  th PL (TR-EXT)
+                  th PL (TR-INT)
+                  th PL RMS
+              tbody
+                tr
+                  td USD
+                  td #{finalPLUSDExt}
+                  td #{finalPLUSDInt}
+                  td #{finalPLUSDInt}
+              tbody
+                tr
+                  td HKD
+                  td #{finalPLHKDExt}
+                  td #{finalPLHKDInt}
+                  td #{finalPLHKDInt}
     // /container
     // Bootstrap core JavaScript
     // ==================================================
@@ -101,7 +137,7 @@ html(lang='en')
           $(reportDiv).each(function(){
             var value = $(this).find("input").value;
             value = JSON.stringify(value);
-            console.log(value);          
+            console.log(value);        
           })
         })
       })

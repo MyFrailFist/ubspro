@@ -10,8 +10,10 @@ var Traders = require('../models/trader');
 
 
 exports.generatePL = function(input, callback){
-	var PandLHKDTotal = 0;
-	var PandLUSDTotal = 0;
+	var PandLHKDTotalExt = 0;
+	var PandLUSDTotalExt = 0;
+	var PandLHKDTotalInt = 0;
+	var PandLHKDTotalInt = 0;
 	async.waterfall([
 		function(cb){
 			// just to remove all traders inside to clear all the data inside
@@ -40,6 +42,7 @@ exports.generatePL = function(input, callback){
 					elem.tradeReport[0].yahooQuote = productItem.yahooQuote;
 					elem.tradeReport[0].bloomQuote = productItem.bloomQuote;
 					elem.tradeReport[0].reutersQuote = productItem.reutersQuote;
+					elem.tradeReport[0].internalPrice = productItem.internalPrice;
 					console.log('elem', elem);
 					Traders.update({_id: elem._id}, {$set:{tradeReport:elem.tradeReport[0]}}, function(err, savedProduct){
 						if(err) return(err);
@@ -101,23 +104,25 @@ exports.generatePL = function(input, callback){
 				async.map(traders, function(element,callback){
 					//gotno internal closing price yet
 					var numberOfTrades = element.tradeReport.length;
-					element.PandLHKD = 0;
+					element.PandLHKDExt=0;
+					element.PandLHKDInt=0;
 					for(var x=0;x<numberOfTrades;x++){
-						//console.log(element.tradeReport[x])
-						//element.tradeReport[x] = JSON.parse(element.tradeReport[x])
-
 						var trade = element.tradeReport[x];
-						var volume = parseInt(trade.volume);
-						var buyPrice = parseInt(trade.price);
-						var closePrice = parseInt(trade.yahooQuote);
-						console.log(volume, buyPrice, closePrice)
-						element.PandLHKD += parseInt(((closePrice-buyPrice)*volume));
-						console.log(element.PandLHKD)
-						element.PandLUSD = parseInt(element.PandLHKD*HKDtoUSD);
-						console.log('why no ele',((closePrice-buyPrice)*volume));
-						PandLHKDTotal+= parseInt(((closePrice-buyPrice)*volume));
-						PandLUSDTotal = parseInt(PandLHKDTotal*HKDtoUSD);
+						var volume = (trade.volume);
+						var buyPrice = parseFloat(trade.price).toFixed(2);
+						var closePriceExt = parseFloat(trade.yahooQuote).toFixed(2);
+						var closePriceInt = parseFloat(trade.internalPrice).toFixed(2);
 
+						element.PandLHKDExt += parseFloat(((closePriceExt - buyPrice) * volume))
+						element.PandLUSDExt = parseFloat(element.PandLHKDExt*HKDtoUSD)
+						PandLHKDTotalExt+= parseFloat(((closePriceExt-buyPrice)*volume))
+						PandLUSDTotalExt = parseFloat(PandLHKDTotalExt*HKDtoUSD)
+
+						element.PandLHKDInt += parseFloat(((closePriceInt - buyPrice) * volume))
+						element.PandLUSDInt = parseFloat(element.PandLHKDInt * HKDtoUSD)
+						PandLHKDTotalInt += parseFloat(((closePriceInt - buyPrice) * volume))
+						PandLUSDTotalInt = parseFloat(PandLHKDTotalInt * HKDtoUSD)
+						console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
 						//in HKD
 					}
 					if(x==numberOfTrades){
@@ -133,8 +138,10 @@ exports.generatePL = function(input, callback){
 		function(results, cb){
 			var parameters = {
 				traders: results,
-				PandLHKDTotal: PandLHKDTotal,
-				PandLUSDTotal: PandLUSDTotal
+				PandLHKDTotalExt: PandLHKDTotalExt,
+				PandLUSDTotalExt: PandLUSDTotalExt,
+				PandLHKDTotalInt: PandLHKDTotalInt,
+				PandLUSDTotalInt: PandLUSDTotalInt
 			}
 			cb(null, parameters);
 		}

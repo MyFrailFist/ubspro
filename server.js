@@ -98,8 +98,8 @@ router.route('/generatePL')
 	.get(function(req, res){
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
-			var curr = parseFloat(response.PandLUSDTotal/response.PandLHKDTotal).toFixed(5);
-			res.render('PLreport', {"rows": JSON.stringify(response.traders), "finalPLHKD": response.PandLHKDTotal, "finalPLUSD": response.PandLUSDTotal, "curr":curr});
+			var curr = parseFloat(response.PandLUSDTotalExt/response.PandLHKDTotalExt).toFixed(5);
+			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLHKDInt": response.PandLHKDTotalInt, "finalPLUSDInt": response.PandLHKDTotalInt, "finalPLHKDExt": response.PandLHKDTotalExt, "finalPLUSDExt": response.PandLUSDTotalExt, "curr":curr});
 			return;
 		})
 	})
@@ -137,8 +137,6 @@ router.route('/upload2')
 			})
 		})
 	})
-
-router.route('/')
 
 router.route('/traders')
 	.get(traderService.renderTraders)
