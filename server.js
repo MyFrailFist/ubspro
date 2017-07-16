@@ -11,6 +11,11 @@ const aync = require('async');
 const app = express();
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var fs = require('fs')
+var multer = require('multer')
+var upload = multer({dest: path.resolve(__dirname)+'/excel/'});
+
+var excel = require('exceljs');
 
 var Product = require('./models/product');
 
@@ -19,6 +24,7 @@ var dashboardService = require('./service/dashboard');
 var PlGenerator = require('./utils/PLgenerator');
 var traderService = require('./utils/traderService');
 var excelParser = require('./utils/excelParser');
+
 
 
 mongoose.connect('mongodb://test13:13test@ds137261.mlab.com:37261/hunglinga12');
@@ -71,19 +77,21 @@ router.route('/dataValidate')//gather data from the internet
 	.get(function(req, res){
 		scraper.validateStocks(null, function(err, response){
 			if(err) return(err);
-			console.log('owenfouwefn', response);
-			return;
+			Product.find({})
+			.exec(function(err, products){
+				res.render('dashboard', {"rows": products})
+			})
 		})
 	})
 
 
-router.route('/slotValues')//display data validate
-	.get(function(req, res){
-		Product.find({})
-		.exec(function(err, products){
-			res.render('dashboard', {"rows": products})
-		})
-	})
+// router.route('/slotValues')//display data validate
+// 	.get(function(req, res){
+// 		Product.find({})
+// 		.exec(function(err, products){
+// 			res.render('dashboard', {"rows": products})
+// 		})
+// 	})
 
 
 router.route('/generatePL')
@@ -96,25 +104,45 @@ router.route('/generatePL')
 		})
 	})
 
-// router.route('/currencyBase/:currency')
-// 	.get(plGenerator.generatePL)
+router.route('/upload')
+	.get(function(req, res){
+		res.render('upload');
+	})
 
-// router.route('/testData')
-// 	.get(plGenerator.generateTestData)
+router.route('/upload1')
+	.post(upload.single('xlsxFileStock'), function(req, res){
+		console.log('wiuebviwevfiwevf')
+		var newPath = path.resolve(__dirname) + '/excel/Products/stockData.xlsx';
+		fs.unlink(newPath, function(err, response){
+			fs.readFile(req.file.path, function(err, data){
+				fs.writeFile(newPath, data, function(err, response){
+					fs.unlink(req.file.path, function(err, result){
+						res.redirect('/ubs/dataValidate');
+					})					
+				})
+			})
+		})
+	})
+
+router.route('/upload2')
+	.post(upload.single('xlsxFileTrade'), function(req, res){
+		var newPath = path.resolve(__dirname) + '/excel/Trades/TraderPortfolios.xlsx';
+		fs.unlink(newPath, function(err, response){
+			fs.readFile(req.file.path, function(err, data){
+				fs.writeFile(newPath, data, function(err, response){
+					fs.unlink(req.file.path, function(err, results){
+						res.redirect('/ubs/generatePL');
+					})
+				})
+			})
+		})
+	})
+
+router.route('/')
 
 router.route('/traders')
 	.get(traderService.renderTraders)
 
-// router.route('/viewbuttons')
-// 	.get(function(req, res){
-// 		res.render('carousel')
-// 	})
-
-// router.route('/firstpl')
-// 	.get(plGenerator.firstTestPL)
-
-// router.route('/excel')
-// 	.get(excelParser.excelParseTraders)
 
 
 

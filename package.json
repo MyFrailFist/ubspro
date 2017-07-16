@@ -19,7 +19,9 @@
     	"uuid": "^3.0.0",
     	"xlsx": "latest",
     	"path": "latest",
-    	"exceljs": "latest"
+    	"exceljs": "latest",
+    	"fs": "latest",
+    	"multer": "latest"
     	
 	},
 	"devDependencies": {

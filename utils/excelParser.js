@@ -10,9 +10,9 @@ var excelParser = require('exceljs');
 
 exports.excelParseTrades = function(input, callback){
 	console.log('yoooo');
-	var fileName = 'TradePortfolios.xlsx'
+	var fileName = 'TraderPortfolios.xlsx'
 	var workbook = new excelParser.Workbook();
-	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/'+fileName)
+	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/Trades/'+fileName)
 	.then(function(){		
 		console.log(workbook);
 		var traderArray = [];
@@ -26,6 +26,9 @@ exports.excelParseTrades = function(input, callback){
 				var action = 'BUY';
 				if(row.values[6]<0){
 					action =' SELL';
+				}
+				if(!row.values[10]|| row.values[10]==null||row.values[10]==undefined||row.values[10]==""){
+					row.values[10] = 'Jake';
 				}
 				var trader = new Traders({
 					traderName: row.values[10]
@@ -60,7 +63,7 @@ exports.excelParseStocks = function(input, callback){
 	var filename = 'stockData.xlsx'
 	var workbook = new excelParser.Workbook();
 	var nameArray = [];
-	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/'+filename)
+	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/Products/'+filename)
 	.then(function(){
 		var stockArray = [];
 		workbook.eachSheet(function(worksheet, sheetId){
