@@ -99,7 +99,7 @@ router.route('/generatePL')
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
 			var curr = parseFloat(response.PandLUSDTotalExt/response.PandLHKDTotalExt).toFixed(5);
-			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLHKDInt": response.PandLHKDTotalInt, "finalPLUSDInt": response.PandLHKDTotalInt, "finalPLHKDExt": response.PandLHKDTotalExt, "finalPLUSDExt": response.PandLUSDTotalExt, "curr":curr});
+			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLHKDInt": parseFloat(response.PandLHKDTotalInt).toFixed(2), "finalPLUSDInt": parseFloat(response.PandLUSDTotalInt).toFixed(2), "finalPLHKDExt": parseFloat(response.PandLHKDTotalExt).toFixed(2), "finalPLUSDExt": parseFloat(response.PandLUSDTotalExt).toFixed(2), "curr":curr});
 			return;
 		})
 	})

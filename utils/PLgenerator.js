@@ -113,8 +113,8 @@ exports.generatePL = function(input, callback){
 						var closePriceExt = parseFloat(trade.yahooQuote).toFixed(2);
 						var closePriceInt = parseFloat(trade.internalPrice).toFixed(2);
 
-						element.PandLHKDExt += parseFloat(((closePriceExt - buyPrice) * volume))
-						element.PandLUSDExt = parseFloat(element.PandLHKDExt*HKDtoUSD)
+						element.PandLHKDExt += parseFloat(((closePriceExt - buyPrice) * volume));
+						element.PandLUSDExt = parseFloat(element.PandLHKDExt*HKDtoUSD);
 						PandLHKDTotalExt+= parseFloat(((closePriceExt-buyPrice)*volume))
 						PandLUSDTotalExt = parseFloat(PandLHKDTotalExt*HKDtoUSD)
 

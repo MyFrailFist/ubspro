@@ -61,6 +61,8 @@ html(lang='en')
                       input(type= 'hidden', name='target', value=local_data)
                   div(id=item.traderName).panel-collapse.collapse
                    -local_data = JSON.parse(local_data)
+                   -item.PandLHKDExt = parseFloat(item.PandLHKDExt).toFixed(2)
+                   -item.PandLHKDInt = parseFloat(item.PandLHKDInt).toFixed(2)
                     .table-responsive
                     table.table.table-striped.table-bordered
                       thead 
@@ -76,9 +78,11 @@ html(lang='en')
                           th P/L RMS 
                       tbody#bodytable
                         each item in local_data
-                         -var int=parseFloat((item.yahooQuote-item.price)*item.volume)
-                         -var ext=parseFloat((item.internalPrice-item.price)*item.volume)
+                         -var int=parseFloat((item.yahooQuote-item.price)*item.volume).toFixed(2)
+                         -var ext=parseFloat((item.internalPrice-item.price)*item.volume).toFixed(2)
+                         
                           tr
+                            input(type= 'hidden', name='pullValues', value=item)
                             td=item.name
                             td=item.productType
                             td=item.actions
@@ -87,7 +91,8 @@ html(lang='en')
                             td=item.baseCurrency
                             td=ext
                             td=int
-                            td=0
+                            td=int
+                            
                       tfoot#totaltable
                         tf
                           td Total
@@ -98,7 +103,7 @@ html(lang='en')
                           td
                           td=item.PandLHKDExt
                           td=item.PandLHKDInt
-                          td=0
+                          td=item.PandLHKDInt
           .container#ProfitLoss
             h2 Profit Loss Report (Inproof)
             p HKD to USD = #{curr}
@@ -121,6 +126,14 @@ html(lang='en')
                   td #{finalPLHKDExt}
                   td #{finalPLHKDInt}
                   td #{finalPLHKDInt}
+          .container#ESR
+            h2 Error Source Report
+            p
+              strong Error Type: 
+            p#ESRerror 
+            .container#containError
+              table.table.table-striped.table-bordered
+
     // /container
     // Bootstrap core JavaScript
     // ==================================================
@@ -130,17 +143,118 @@ html(lang='en')
     script(src=`/bootstrap/dist/js/bootstrap.min.js`)
     script.
       $(document).ready(function(){
-        $("#tradersPanel div").find("input").each(function(){
-          var reportDiv = $(this).parent().parent().next().children();
-          var data = $(this).val();
-          data = JSON.parse(data);
-          $(reportDiv).each(function(){
-            var value = $(this).find("input").value;
-            value = JSON.stringify(value);
-            console.log(value);        
-          })
+        var tradesArr = [];
+        var indicatorArray = ['PASS', 'ErrorType1', 'ErrorType2'];
+        var errorType = 'PASS';
+        $('#bodytable tr').each(function(){
+          var Ext = $(this).find('td')[6].innerHTML;
+          var Int = $(this).find('td')[7].innerHTML;
+          var RMS = $(this).find('td')[8].innerHTML;
+          var row = $(this).find('input').val();
+          if((Ext == Int)&&(Int == RMS)){
+            $(this).find('td:nth-child(8)').css("background-color", "#7FFFD4");
+            $(this).find('td:nth-child(9)').css("background-color", "#7FFFD4");
+            $(this).find('td:nth-child(10)').css("background-color", "#7FFFD4");
+          } else{
+            tradesArr.push(row)
+            $(this).find('td:nth-child(8)').css("background-color", "#FF0000");
+            $(this).find('td:nth-child(9)').css("background-color", "#FF0000");
+            $(this).find('td:nth-child(10)').css("background-color", "#FF0000");
+          }
         })
+        $('#totaltable tr').each(function(){
+          var a = $(this).find('td')[6].innerHTML
+          var b = $(this).find('td')[7].innerHTML
+          var c = $(this).find('td')[8].innerHTML
+
+          if(( a == b ) && ( b == c )){
+            $(this).find('td:nth-child(7)').css("background-color", "#7FFFD4");
+            $(this).find('td:nth-child(8)').css("background-color", "#7FFFD4");
+            $(this).find('td:nth-child(9)').css("background-color", "#7FFFD4");
+          } else{
+            $(this).find('td:nth-child(7)').css("background-color", "#FF0000");
+            $(this).find('td:nth-child(8)').css("background-color", "#FF0000");
+            $(this).find('td:nth-child(9)').css("background-color", "#FF0000");
+          }
+        })
+        $('#ProfitLoss tbody').each(function(){
+          var d = $(this).find('tr').find('td')[1].innerHTML
+          var e = $(this).find('tr').find('td')[2].innerHTML
+          var f = $(this).find('tr').find('td')[3].innerHTML
+          if( (d == e)&&(e == f )){
+            errorType = indicatorArray[0]
+            $(this).find('tr').find('td:nth-child(2)').css("background-color", "#7FFFD4");
+            $(this).find('tr').find('td:nth-child(3)').css("background-color", "#7FFFD4");
+            $(this).find('tr').find('td:nth-child(4)').css("background-color", "#7FFFD4");
+            console.log(' no error');
+          } 
+          else if( d!=e && ( (d==f) || (e==f) ) ) {
+            console.log('int ext markt discrep')
+            errorType = indicatorArray[1]
+            $(this).find('tr').find('td:nth-child(2)').css("background-color", "#FF0000");
+            $(this).find('tr').find('td:nth-child(3)').css("background-color", "#FF0000");
+            $(this).find('tr').find('td:nth-child(4)').css("background-color", "#7FFFD4");
+
+          }
+          else if( d==e &&( (d!=f) || (e!=f) ) ){
+            errorType = indicatorArray[2]
+            $(this).find('tr').find('td:nth-child(2)').css("background-color", "#7FFFD4");
+            $(this).find('tr').find('td:nth-child(3)').css("background-color", "#7FFFD4");
+            $(this).find('tr').find('td:nth-child(4)').css("background-color", "#FF0000");
+          }
+          else{
+            $(this).find('tr').find('td:nth-child(2)').css("background-color", "#FF0000");
+            $(this).find('tr').find('td:nth-child(3)').css("background-color", "#FF0000");
+            $(this).find('tr').find('td:nth-child(4)').css("background-color", "#FF0000");
+          }
+        })
+        var errorLength = tradesArr.length;
+        $('#ESR').each(function(){
+          if(errorType == 'PASS'){
+            $(this).find('#ESRerror').text('Pass, no errors found')
+          }
+          if(errorType == 'ErrorType1'){
+            $(this).find('#ESRerror').text('Error type 1 detected, internal external market discrepancy')
+            var head = '<thead><tr>'+ '<td>Name</td><td>Product Type</td><td>Action</td><td>Volume</td><td>Price Quote</td><td>Base Currency</td><td>PL External</td><td>PL internal</td><td>P/L RMS</td>'+'</tr></thead>'
+            
+            var bb = "";
+            for(var x = 0; x<errorLength;x++){
+            
+              var report = JSON.parse(tradesArr[x]); 
+              console.log(report);
+              var name = report.name;
+              var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
+              var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              bb = bb + body;
+            }
+            console.log(body);
+            var final = '<tbody>'+ bb + '</tbody>'
+            final = head + final;
+            $('#containError table.table.table-striped.table-bordered').append(final);
+          }
+          if(errorType == 'ErrorType2'){
+           $(this).find('#ESRerror').text('Error type 2 detected, position error detected')
+            var head = '<thead><tr>'+ '<td>Name</td><td>Product Type</td><td>Action</td><td>Volume</td><td>Price Quote</td><td>Base Currency</td><td>PL External</td><td>PL internal</td><td>P/L RMS</td>'+'</tr></thead>'           
+            var bb = "";
+            for(var x = 0; x<errorLength;x++){            
+              var report = JSON.parse(tradesArr[x]); 
+              console.log(report);
+              var name = report.name;
+              var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
+              var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              bb = bb + body;
+            }
+            console.log(body);
+            var final = '<tbody>'+ bb + '</tbody>'
+            final = head + final;
+            $('#containError table.table.table-striped.table-bordered').append(final);
+          }
+        })        
       })
+
+    
       
       
       
