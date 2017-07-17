@@ -6,6 +6,7 @@ var Product	= require('../models/product');
 var xlsx = require('xlsx');
 var path = require('path');
 var excelParser = require('exceljs');
+var ProductRMS = require('../models/productRMS');
 
 
 exports.excelParseTrades = function(input, callback){
@@ -93,27 +94,38 @@ exports.excelParseStocks = function(input, callback){
 }
 
 
-// exports.excelParsePl = function(input, callback){
-// 	var filename = 'TradePortfolios.xslx'
-// 	var workbook = new excelParser.Workbook();
-// 	var nameArray = [];
-// 	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/'+filename)
-// 	.then(function(){
-// 		var traderArray = [];
-// 		workbook.eachSheet(function(worksheet, sheetId){
-// 			worksheet.eachRow(function(row, rowNumber){
-// 				if(row.values[1] == 'Symbol'){
-// 					return;
-// 				}
-// 				var actions = 'BUY';
-// 				if(row.values[6]<=0){
-// 					actions = 'SELL'
-// 				}
-// 				var trader
-// 			})
-// 		})
-// 	})
-// }
-
-
-
+exports.produceRMS = function(input, callback){
+	var filename = 'Hagen_Prime.xlsx'
+	var workbook = new excelParser.Workbook();
+	var nameArray = [];
+	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/'+filename)
+	.then(function(){
+		var stockArray = [];
+		workbook.eachSheet(function(worksheet, sheetId){
+			worksheet.eachRow(function(row, rowNumber){
+				if(row.values[1]=='Symbol'){
+					return;
+				}
+				var action = 'BUY';
+				if(row.values[6]<0){
+					action =' SELL';
+				}
+				var tradesRMS = new ProductRMS({
+					symbol: row.values[1],
+					productType: 'Stocks',
+					internalPriceQuote: row.values[9],
+					action: action,
+					volume: Math.abs(row.values[6]),
+					baseCurrency: 'HKD',
+					traderName: row.values[10]
+				})
+				stockArray.push(tradesRMS);
+			});
+		});
+		ProductRMS.create(stockArray, function(err, response){
+			if(err) return(err);
+			console.log(response);
+			return;
+		})
+	})
+}

@@ -7,13 +7,16 @@ var excelParserUtils = require('./excelParser');
 var Currency = require('../models/currency');
 var Product = require('../models/product');
 var Traders = require('../models/trader');
-
+var ProductRMS = require('../models/productRMS');
 
 exports.generatePL = function(input, callback){
 	var PandLHKDTotalExt = 0;
 	var PandLUSDTotalExt = 0;
 	var PandLHKDTotalInt = 0;
 	var PandLHKDTotalInt = 0;
+	var RMSPandLHKDTotal = 0;
+	var RMSPandLUSDTotal = 0;
+
 	async.waterfall([
 		function(cb){
 			// just to remove all traders inside to clear all the data inside
@@ -43,11 +46,18 @@ exports.generatePL = function(input, callback){
 					elem.tradeReport[0].bloomQuote = productItem.bloomQuote;
 					elem.tradeReport[0].reutersQuote = productItem.reutersQuote;
 					elem.tradeReport[0].internalPrice = productItem.internalPrice;
-					console.log('elem', elem);
-					Traders.update({_id: elem._id}, {$set:{tradeReport:elem.tradeReport[0]}}, function(err, savedProduct){
+
+					ProductRMS.findOne({"symbol": elem.tradeReport[0].abbreviation, "traderName": elem.traderName}, function(err, productRMS){
 						if(err) return(err);
-						return callback(null);
+						elem.tradeReport[0].RMSVolume = productRMS.volume;
+						elem.tradeReport[0].RMSQuotePrice = productRMS.internalPriceQuote;
+						elem.tradeReport[0].RMSaction = productRMS.action;
+						Traders.update({_id: elem._id}, {$set:{tradeReport:elem.tradeReport[0]}}, function(err, savedProduct){
+							if(err) return(err);
+							return callback(null);
+						})
 					})
+						
 				})
 			}, function(err, results){
 				if(err) return(err);
@@ -103,31 +113,42 @@ exports.generatePL = function(input, callback){
 				//console.log('in the currency: ', HKDtoUSD);
 				async.map(traders, function(element,callback){
 					//gotno internal closing price yet
-					var numberOfTrades = element.tradeReport.length;
-					element.PandLHKDExt=0;
-					element.PandLHKDInt=0;
-					for(var x=0;x<numberOfTrades;x++){
-						var trade = element.tradeReport[x];
-						var volume = (trade.volume);
-						var buyPrice = parseFloat(trade.price).toFixed(2);
-						var closePriceExt = parseFloat(trade.yahooQuote).toFixed(2);
-						var closePriceInt = parseFloat(trade.internalPrice).toFixed(2);
+					
+						var numberOfTrades = element.tradeReport.length;
+						element.PandLHKDExt=0;
+						element.PandLHKDInt=0;
+						element.PandLHKDRMS=0;
+						for(var x=0;x<numberOfTrades;x++){
+							var trade = element.tradeReport[x];
+							var volume = (trade.volume);
+							var buyPrice = parseFloat(trade.price).toFixed(2);
+							var closePriceExt = parseFloat(trade.yahooQuote).toFixed(2);
+							var closePriceInt = parseFloat(trade.internalPrice).toFixed(2);
+							var RMSvolume = trade.RMSVolume;
+							var RMSquotePrice = parseFloat(trade.RMSQuotePrice).toFixed(2);
 
-						element.PandLHKDExt += parseFloat(((closePriceExt - buyPrice) * volume));
-						element.PandLUSDExt = parseFloat(element.PandLHKDExt*HKDtoUSD);
-						PandLHKDTotalExt+= parseFloat(((closePriceExt-buyPrice)*volume))
-						PandLUSDTotalExt = parseFloat(PandLHKDTotalExt*HKDtoUSD)
+							element.PandLHKDExt += parseFloat(((closePriceExt - buyPrice) * volume));
+							element.PandLUSDExt = parseFloat(element.PandLHKDExt*HKDtoUSD);
+							PandLHKDTotalExt+= parseFloat(((closePriceExt-buyPrice)*volume));
+							PandLUSDTotalExt = parseFloat(PandLHKDTotalExt*HKDtoUSD);
 
-						element.PandLHKDInt += parseFloat(((closePriceInt - buyPrice) * volume))
-						element.PandLUSDInt = parseFloat(element.PandLHKDInt * HKDtoUSD)
-						PandLHKDTotalInt += parseFloat(((closePriceInt - buyPrice) * volume))
-						PandLUSDTotalInt = parseFloat(PandLHKDTotalInt * HKDtoUSD)
-						console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
-						//in HKD
-					}
-					if(x==numberOfTrades){
-						return callback(null);
-					}
+							element.PandLHKDInt += parseFloat(((closePriceInt - buyPrice) * volume));
+							element.PandLUSDInt = parseFloat(element.PandLHKDInt * HKDtoUSD);
+							PandLHKDTotalInt += parseFloat(((closePriceInt - buyPrice) * volume));
+							PandLUSDTotalInt = parseFloat(PandLHKDTotalInt * HKDtoUSD);
+
+							element.PandLHKDRMS += parseFloat((closePriceInt - RMSquotePrice) * volume);
+							element.PandLUSDRMS = parseFloat(element.PandLHKDRMS * HKDtoUSD);
+							RMSPandLHKDTotal += parseFloat((closePriceInt - RMSquotePrice)*volume);
+							RMSPandLUSDTotal = parseFloat(RMSPandLHKDTotal*HKDtoUSD);
+
+							console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
+							//in HKD
+						}
+						if(x==numberOfTrades){
+							return callback(null);
+						}
+
 				}, function(err, results){
 					if(err) return(err);
 					console.log('newly attached details: ', traders)
@@ -141,7 +162,9 @@ exports.generatePL = function(input, callback){
 				PandLHKDTotalExt: PandLHKDTotalExt,
 				PandLUSDTotalExt: PandLUSDTotalExt,
 				PandLHKDTotalInt: PandLHKDTotalInt,
-				PandLUSDTotalInt: PandLUSDTotalInt
+				PandLUSDTotalInt: PandLUSDTotalInt,
+				RMSPandLHKDTotal: RMSPandLHKDTotal,
+				RMSPandLUSDTotal: RMSPandLUSDTotal
 			}
 			cb(null, parameters);
 		}

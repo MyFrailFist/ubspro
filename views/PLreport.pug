@@ -80,7 +80,7 @@ html(lang='en')
                         each item in local_data
                          -var int=parseFloat((item.yahooQuote-item.price)*item.volume).toFixed(2)
                          -var ext=parseFloat((item.internalPrice-item.price)*item.volume).toFixed(2)
-                         
+                         -var RMS=parseFloat((item.internalPrice-item.RMSQuotePrice)*item.RMSVolume).toFixed(2)
                           tr
                             input(type= 'hidden', name='pullValues', value=item)
                             td=item.name
@@ -91,7 +91,7 @@ html(lang='en')
                             td=item.baseCurrency
                             td=ext
                             td=int
-                            td=int
+                            td=RMS
                             
                       tfoot#totaltable
                         tf
@@ -103,7 +103,7 @@ html(lang='en')
                           td
                           td=item.PandLHKDExt
                           td=item.PandLHKDInt
-                          td=item.PandLHKDInt
+                          td=item.PandLHKDRMS
           .container#ProfitLoss
             h2 Profit Loss Report (Inproof)
             p HKD to USD = #{curr}
@@ -119,13 +119,13 @@ html(lang='en')
                   td USD
                   td #{finalPLUSDExt}
                   td #{finalPLUSDInt}
-                  td #{finalPLUSDInt}
+                  td #{finalPLUSDRMS}
               tbody
                 tr
                   td HKD
                   td #{finalPLHKDExt}
                   td #{finalPLHKDInt}
-                  td #{finalPLHKDInt}
+                  td #{finalPLHKDRMS}
           .container#ESR
             h2 Error Source Report
             p

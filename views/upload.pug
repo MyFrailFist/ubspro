@@ -44,17 +44,15 @@ html(lang='en')
             li
               a(href='/ubs/generatePL') Profit Loss Report
             li
-              a(href='/ubs/traders') Traders
-            li
               a(href='#') Upload
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           .col-sm-6
-            h3 Upload Stocks Data here for validation here
+            h3 Upload Stocks Data for validation here
             form(action="/ubs/upload1", method="post", encType="multipart/form-data")
               input(type="file", name="xlsxFileStock")
               input(type="submit", value="Upload", name="Submit")
           .col-sm-6
-            h3 Upload the Traders Portfolio for P/L generation
+            h3 Upload Traders Portfolio to generate P/L
             form(action="/ubs/upload2", method="post", encType="multipart/form-data")
               input(type="file", name="xlsxFileTrade")
               input(type="submit", value="Upload", name="Submit")

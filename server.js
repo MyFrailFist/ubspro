@@ -51,28 +51,6 @@ router.use(function(req, res, next){
 	next();
 });
 
-
-router.route('/welcome')
-	.get(function(req, res){
-		var hi = 'hi';
-		console.log('wiebfiwfbwef');
-		res.render("index");
-	})
-
-// router.route('/scrapeBloom')
-// 	.get(scraper.scrapeBloom)
-
-// router.route('/scrapeYahooMajorIndices')
-// 	.get(scraper.scrapeYahooMajorIndices)
-
-// router.route('/viewhtml')
-// 	.get(function(req, res){
-// 		res.sendFile("views/public/dashboard.html");
-// 	})
-
-// router.route('/viewDash')
-// 	.get(dashboardService.dashboardRender);
-
 router.route('/dataValidate')//gather data from the internet
 	.get(function(req, res){
 		scraper.validateStocks(null, function(err, response){
@@ -85,21 +63,12 @@ router.route('/dataValidate')//gather data from the internet
 	})
 
 
-// router.route('/slotValues')//display data validate
-// 	.get(function(req, res){
-// 		Product.find({})
-// 		.exec(function(err, products){
-// 			res.render('dashboard', {"rows": products})
-// 		})
-// 	})
-
-
 router.route('/generatePL')
 	.get(function(req, res){
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
 			var curr = parseFloat(response.PandLUSDTotalExt/response.PandLHKDTotalExt).toFixed(5);
-			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLHKDInt": parseFloat(response.PandLHKDTotalInt).toFixed(2), "finalPLUSDInt": parseFloat(response.PandLUSDTotalInt).toFixed(2), "finalPLHKDExt": parseFloat(response.PandLHKDTotalExt).toFixed(2), "finalPLUSDExt": parseFloat(response.PandLUSDTotalExt).toFixed(2), "curr":curr});
+			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLUSDRMS":parseFloat(response.RMSPandLUSDTotal).toFixed(2), "finalPLHKDRMS": parseFloat(reponse.RMSPandLHKDTotal).toFixed(2), "finalPLHKDInt": parseFloat(response.PandLHKDTotalInt).toFixed(2), "finalPLUSDInt": parseFloat(response.PandLUSDTotalInt).toFixed(2), "finalPLHKDExt": parseFloat(response.PandLHKDTotalExt).toFixed(2), "finalPLUSDExt": parseFloat(response.PandLUSDTotalExt).toFixed(2), "curr":curr});
 			return;
 		})
 	})
@@ -138,10 +107,9 @@ router.route('/upload2')
 		})
 	})
 
-router.route('/traders')
-	.get(traderService.renderTraders)
 
-
+router.route('/uploadRMS')
+	.get(excelParser.produceRMS)
 
 
 
