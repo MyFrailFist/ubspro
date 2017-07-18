@@ -138,9 +138,9 @@ exports.generatePL = function(input, callback){
 							PandLHKDTotalInt += parseFloat(((closePriceInt - buyPrice) * volume));
 							PandLUSDTotalInt = parseFloat(PandLHKDTotalInt * HKDtoUSD);
 
-							element.PandLHKDRMS += parseFloat((closePriceInt - RMSquotePrice) * volume);
+							element.PandLHKDRMS += parseFloat((closePriceInt - RMSquotePrice) * RMSvolume);
 							element.PandLUSDRMS = parseFloat(element.PandLHKDRMS * HKDtoUSD);
-							RMSPandLHKDTotal += parseFloat((closePriceInt - RMSquotePrice)*volume);
+							RMSPandLHKDTotal += parseFloat((closePriceInt - RMSquotePrice)*RMSvolume);
 							RMSPandLUSDTotal = parseFloat(RMSPandLHKDTotal*HKDtoUSD);
 
 							console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
