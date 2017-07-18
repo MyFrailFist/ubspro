@@ -49,7 +49,7 @@ exports.generatePL = function(input, callback){
 					console.log('the elem is', elem)
 					ProductRMS.findOne({"symbol": elem.tradeReport[0].name, "traderName": elem.traderName}, function(err, productRMS){
 						if(err) return(err);
-						console.log('thoro', ProductRMS)
+						console.log('trades record from RMS pulled', productRMS)
 						elem.tradeReport[0].RMSVolume = productRMS.volume;
 						elem.tradeReport[0].RMSQuotePrice = productRMS.internalPriceQuote;
 						elem.tradeReport[0].RMSaction = productRMS.action;
@@ -97,7 +97,7 @@ exports.generatePL = function(input, callback){
 					// }
 				], function(err, results){
 					// results orgasnised here
-					console.log('finished aggreg: ', JSON.stringify(results))
+					console.log('finished aggregating: ', JSON.stringify(results))
 					Traders.find({})
 					.remove()
 					.exec(function(err, response){
@@ -111,10 +111,9 @@ exports.generatePL = function(input, callback){
 			getCurrency('HKD', null, null, function(err, response){
 				
 				var HKDtoUSD = JSON.parse(response.body).rates.USD;
-				//console.log('in the currency: ', HKDtoUSD);
+				console.log('HKD to USD: ', HKDtoUSD);
 				async.map(traders, function(element,callback){
-					//gotno internal closing price yet
-					
+					//gotno internal closing price yet					
 						var numberOfTrades = element.tradeReport.length;
 						element.PandLHKDExt=0;
 						element.PandLHKDInt=0;
@@ -142,17 +141,15 @@ exports.generatePL = function(input, callback){
 							element.PandLUSDRMS = parseFloat(element.PandLHKDRMS * HKDtoUSD);
 							RMSPandLHKDTotal += parseFloat((closePriceInt - RMSquotePrice)*RMSvolume);
 							RMSPandLUSDTotal = parseFloat(RMSPandLHKDTotal * HKDtoUSD);
-
-							console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
 							//in HKD
 						}
 						if(x==numberOfTrades){
+							console.log('trade reports are: ', element);
 							return callback(null);
 						}
 
 				}, function(err, results){
 					if(err) return(err);
-					console.log('newly attached details: ', traders)
 					cb(null, traders);
 				});				
 			})				

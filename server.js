@@ -20,9 +20,7 @@ var excel = require('exceljs');
 var Product = require('./models/product');
 
 var scraper = require('./utils/scraper');
-var dashboardService = require('./service/dashboard');
 var PlGenerator = require('./utils/PLgenerator');
-var traderService = require('./utils/traderService');
 var excelParser = require('./utils/excelParser');
 
 
@@ -34,14 +32,10 @@ const PORT = process.env.PORT || 8800;
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
-//directing to pug templates
 app.set('views',path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-//directing to the css/html side of things
 app.use(express.static(path.join(__dirname, 'public')));
-//app.set('view engine', 'jade');
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
-//app.use('/scripts', express.static(__dirname + '/node_modules/bootstrap/dist'))
 
 const router = express.Router();
 
@@ -53,6 +47,7 @@ router.use(function(req, res, next){
 
 router.route('/dataValidate')//gather data from the internet
 	.get(function(req, res){
+		console.log('gathering data from internate to validate internal data')
 		scraper.validateStocks(null, function(err, response){
 			if(err) return(err);
 			Product.find({})
@@ -65,6 +60,7 @@ router.route('/dataValidate')//gather data from the internet
 
 router.route('/generatePL')
 	.get(function(req, res){
+		console.log('preparing to generate new PL')
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
 			var curr = parseFloat(response.PandLUSDTotalExt/response.PandLHKDTotalExt).toFixed(5);
@@ -75,17 +71,21 @@ router.route('/generatePL')
 
 router.route('/upload')
 	.get(function(req, res){
+		console.log('entered upload page');
 		res.render('upload');
 	})
 
 router.route('/upload1')
 	.post(upload.single('xlsxFileStock'), function(req, res){
-		console.log('wiuebviwevfiwevf')
+		console.log('Uploaded stocks data');
 		var newPath = path.resolve(__dirname) + '/excel/Products/stockData.xlsx';
 		fs.unlink(newPath, function(err, response){
+			console.log('Deleted old stock data');
 			fs.readFile(req.file.path, function(err, data){
 				fs.writeFile(newPath, data, function(err, response){
+					console.log('wrote new file sotck data');
 					fs.unlink(req.file.path, function(err, result){
+						console.log('deleted old link file')
 						res.redirect('/ubs/dataValidate');
 					})					
 				})
@@ -95,23 +95,21 @@ router.route('/upload1')
 
 router.route('/upload2')
 	.post(upload.single('xlsxFileTrade'), function(req, res){
+		console.log("uploaded new trader portfolios");
 		var newPath = path.resolve(__dirname) + '/excel/Trades/TraderPortfolios.xlsx';
 		fs.unlink(newPath, function(err, response){
+			console.log('deleted old tradersportfolio')
 			fs.readFile(req.file.path, function(err, data){
 				fs.writeFile(newPath, data, function(err, response){
+					console.log('wrote new traders portfolios data')
 					fs.unlink(req.file.path, function(err, results){
+						console.log('deleted old link file')
 						res.redirect('/ubs/generatePL');
 					})
 				})
 			})
 		})
 	})
-
-
-router.route('/uploadRMS')
-	.get(excelParser.produceRMS)
-
-
 
 
 //register our routes

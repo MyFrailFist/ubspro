@@ -44,8 +44,6 @@ html(lang='en')
             li
               a(href='/ubs/generatePL') Profit Loss Report
             li
-              a(href='/ubs/traders') Traders
-            li
               a(href='/ubs/upload') Upload
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           .container#tradersPanel
@@ -226,7 +224,8 @@ html(lang='en')
               var name = report.name;
               var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
               var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
-              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              var RMS= parseFloat((report.internalPrice-report.RMSQuotePrice)*report.RMSVolume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+RMS+'</td>'+'</tr>'
               bb = bb + body;
             }
             console.log(body);
@@ -244,7 +243,8 @@ html(lang='en')
               var name = report.name;
               var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
               var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
-              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              var RMS= parseFloat((report.internalPrice-report.RMSQuotePrice)*report.RMSVolume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+RMS+'</td>'+'</tr>'
               bb = bb + body;
             }
             console.log(body);
@@ -262,7 +262,8 @@ html(lang='en')
               var name = report.name;
               var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
               var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
-              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              var RMS= parseFloat((report.internalPrice-report.RMSQuotePrice)*report.RMSVolume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+RMS+'</td>'+'</tr>'
               bb = bb + body;
             }
             console.log(body);

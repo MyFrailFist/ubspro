@@ -10,12 +10,10 @@ var ProductRMS = require('../models/productRMS');
 
 
 exports.excelParseTrades = function(input, callback){
-	console.log('yoooo');
 	var fileName = 'TraderPortfolios.xlsx'
 	var workbook = new excelParser.Workbook();
 	workbook.xlsx.readFile(path.resolve(__dirname)+'/../excel/Trades/'+fileName)
-	.then(function(){		
-		console.log(workbook);
+	.then(function(){	
 		var traderArray = [];
 		workbook.eachSheet(function(worksheet, sheetId){
 			
@@ -42,16 +40,13 @@ exports.excelParseTrades = function(input, callback){
 					price: row.values[9],
 					baseCurrency: 'HKD'
 				}
-				console.log('the reports are: ', report);
 				trader.tradeReport.push(report);
 
 				traderArray.push(trader);
-				console.log(traderArray)
 			});
 		});
 		Traders.create(traderArray, function(err, traders){
 			if(err) return(err);
-			console.log('saved the traders: ', traders);
 			return callback(null, traders);
 		})
 	})
@@ -86,7 +81,6 @@ exports.excelParseStocks = function(input, callback){
 				}
 
 				stockArray.push(stock);
-				console.log(stockArray);
 			});
 		});
 			return callback(null, stockArray);
@@ -124,7 +118,6 @@ exports.produceRMS = function(input, callback){
 		});
 		ProductRMS.create(stockArray, function(err, response){
 			if(err) return(err);
-			console.log(response);
 			return;
 		})
 	})
