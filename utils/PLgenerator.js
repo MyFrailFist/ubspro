@@ -46,9 +46,10 @@ exports.generatePL = function(input, callback){
 					elem.tradeReport[0].bloomQuote = productItem.bloomQuote;
 					elem.tradeReport[0].reutersQuote = productItem.reutersQuote;
 					elem.tradeReport[0].internalPrice = productItem.internalPrice;
-
-					ProductRMS.findOne({"symbol": elem.tradeReport[0].abbreviation, "traderName": elem.traderName}, function(err, productRMS){
+					console.log('the elem is', elem)
+					ProductRMS.findOne({"symbol": elem.tradeReport[0].name, "traderName": elem.traderName}, function(err, productRMS){
 						if(err) return(err);
+						console.log('thoro', ProductRMS)
 						elem.tradeReport[0].RMSVolume = productRMS.volume;
 						elem.tradeReport[0].RMSQuotePrice = productRMS.internalPriceQuote;
 						elem.tradeReport[0].RMSaction = productRMS.action;

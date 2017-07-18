@@ -68,7 +68,7 @@ router.route('/generatePL')
 		PlGenerator.generatePL(null, function(err, response){
 			if(err) return(err);
 			var curr = parseFloat(response.PandLUSDTotalExt/response.PandLHKDTotalExt).toFixed(5);
-			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLUSDRMS":parseFloat(response.RMSPandLUSDTotal).toFixed(2), "finalPLHKDRMS": parseFloat(reponse.RMSPandLHKDTotal).toFixed(2), "finalPLHKDInt": parseFloat(response.PandLHKDTotalInt).toFixed(2), "finalPLUSDInt": parseFloat(response.PandLUSDTotalInt).toFixed(2), "finalPLHKDExt": parseFloat(response.PandLHKDTotalExt).toFixed(2), "finalPLUSDExt": parseFloat(response.PandLUSDTotalExt).toFixed(2), "curr":curr});
+			res.render('PLreport', {"rows": JSON.stringify(response.traders),"finalPLUSDRMS":parseFloat(response.RMSPandLUSDTotal).toFixed(2), "finalPLHKDRMS": parseFloat(response.RMSPandLHKDTotal).toFixed(2), "finalPLHKDInt": parseFloat(response.PandLHKDTotalInt).toFixed(2), "finalPLUSDInt": parseFloat(response.PandLUSDTotalInt).toFixed(2), "finalPLHKDExt": parseFloat(response.PandLHKDTotalExt).toFixed(2), "finalPLUSDExt": parseFloat(response.PandLUSDTotalExt).toFixed(2), "curr":curr});
 			return;
 		})
 	})
