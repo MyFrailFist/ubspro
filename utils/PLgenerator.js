@@ -141,7 +141,7 @@ exports.generatePL = function(input, callback){
 							element.PandLHKDRMS += parseFloat((closePriceInt - RMSquotePrice) * RMSvolume);
 							element.PandLUSDRMS = parseFloat(element.PandLHKDRMS * HKDtoUSD);
 							RMSPandLHKDTotal += parseFloat((closePriceInt - RMSquotePrice)*RMSvolume);
-							RMSPandLUSDTotal = parseFloat(RMSPandLHKDTotal*HKDtoUSD);
+							RMSPandLUSDTotal = parseFloat(RMSPandLHKDTotal * HKDtoUSD);
 
 							console.log('breakles', closePriceExt, buyPrice, volume,(((closePriceExt - buyPrice) * volume)))
 							//in HKD

@@ -203,6 +203,7 @@ html(lang='en')
             $(this).find('tr').find('td:nth-child(4)').css("background-color", "#FF0000");
           }
           else{
+            errorType = 'Both ErrorType 1 and ErrorType2';
             $(this).find('tr').find('td:nth-child(2)').css("background-color", "#FF0000");
             $(this).find('tr').find('td:nth-child(3)').css("background-color", "#FF0000");
             $(this).find('tr').find('td:nth-child(4)').css("background-color", "#FF0000");
@@ -235,6 +236,24 @@ html(lang='en')
           }
           if(errorType == 'ErrorType2'){
            $(this).find('#ESRerror').text('Error type 2 detected, position error detected')
+            var head = '<thead><tr>'+ '<td>Name</td><td>Product Type</td><td>Action</td><td>Volume</td><td>Price Quote</td><td>Base Currency</td><td>PL External</td><td>PL internal</td><td>P/L RMS</td>'+'</tr></thead>'           
+            var bb = "";
+            for(var x = 0; x<errorLength;x++){            
+              var report = JSON.parse(tradesArr[x]); 
+              console.log(report);
+              var name = report.name;
+              var int=parseFloat((report.yahooQuote-report.price)*report.volume).toFixed(2)
+              var ext=parseFloat((report.internalPrice-report.price)*report.volume).toFixed(2)
+              var body = '<tr>'+ '<td>'+report.name+'</td><td>'+report.productType+'</td><td>'+report.actions+'</td><td>'+report.volume+'</td><td>'+report.price+'</td><td>'+report.baseCurrency+'</td><td>'+ext+'</td><td>'+int+'</td><td>'+int+'</td>'+'</tr>'
+              bb = bb + body;
+            }
+            console.log(body);
+            var final = '<tbody>'+ bb + '</tbody>'
+            final = head + final;
+            $('#containError table.table.table-striped.table-bordered').append(final);
+          }
+          if(errorType == 'Both ErrorType 1 and ErrorType2'){
+            $(this).find('#ESRerror').text('Both Error type 1 and type 2 detected, Internal External Market Discrepancy and Postion error detected')
             var head = '<thead><tr>'+ '<td>Name</td><td>Product Type</td><td>Action</td><td>Volume</td><td>Price Quote</td><td>Base Currency</td><td>PL External</td><td>PL internal</td><td>P/L RMS</td>'+'</tr></thead>'           
             var bb = "";
             for(var x = 0; x<errorLength;x++){            
